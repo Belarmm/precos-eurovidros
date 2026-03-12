@@ -223,6 +223,60 @@ main { padding: 16px; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
 .resumo-row span:first-child { color: var(--text2); }
 .resumo-row span:last-child { font-weight: 700; color: var(--text); }
 
+
+/* MARKUP CONTROL */
+.markup-wrap { display: flex; flex-direction: column; gap: 12px; }
+.markup-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.markup-label { font-size: 13px; color: var(--text2); flex: 1; }
+.markup-input-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.markup-btn {
+  width: 34px; height: 34px;
+  background: var(--bg3); border: 1.5px solid var(--border);
+  border-radius: 8px; color: var(--accent);
+  font-size: 20px; font-weight: 700; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.markup-btn:active { background: var(--accent); color: #fff; }
+.markup-input {
+  width: 64px; height: 34px;
+  background: var(--bg3); border: 1.5px solid var(--accent);
+  border-radius: 8px; color: var(--text);
+  font-size: 17px; font-weight: 700; font-family: inherit;
+  text-align: center; outline: none;
+}
+.markup-input::-webkit-inner-spin-button,
+.markup-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.markup-pct { font-size: 15px; font-weight: 700; color: var(--text2); }
+.markup-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px;
+  background: var(--bg3); border-radius: 3px; outline: none;
+  accent-color: var(--accent);
+}
+.markup-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%; background: var(--accent);
+  cursor: pointer; box-shadow: 0 2px 8px rgba(26,143,227,0.5);
+}
+.markup-presets { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.markup-preset-label { font-size: 11px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 2px; }
+.preset-chip {
+  background: var(--bg3); border: 1.5px solid var(--border);
+  border-radius: 6px; padding: 5px 12px;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+}
+.preset-chip.selected, .preset-chip:active {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.markup-preview {
+  background: var(--bg3); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; color: var(--text2);
+}
+.markup-formula { color: var(--accent); font-weight: 600; font-family: monospace; font-size: 12px; }
+
 footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: var(--text2); }
 </style>
 </head>
@@ -251,6 +305,33 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
     <div class="chips-grid" id="chipsEspessura"></div>
   </div>
 
+  <div class="card" id="cardMarkup">
+    <div class="card-label">3. Markup de Venda</div>
+    <div class="markup-wrap">
+      <div class="markup-row">
+        <span class="markup-label">Percentual sobre custo c/ IPI</span>
+        <div class="markup-input-wrap">
+          <button class="markup-btn" onclick="ajustarMarkup(-5)">−</button>
+          <input class="markup-input" id="markupInput" type="number" min="5" max="300" step="1" value="70" oninput="onMarkupInput()">
+          <span class="markup-pct">%</span>
+          <button class="markup-btn" onclick="ajustarMarkup(+5)">+</button>
+        </div>
+      </div>
+      <input class="markup-slider" id="markupSlider" type="range" min="5" max="200" step="1" value="70" oninput="onMarkupSlider()">
+      <div class="markup-presets">
+        <span class="markup-preset-label">Rápido:</span>
+        <button class="preset-chip" onclick="setMarkup(50)">50%</button>
+        <button class="preset-chip" onclick="setMarkup(60)">60%</button>
+        <button class="preset-chip selected" id="preset70" onclick="setMarkup(70)">70%</button>
+        <button class="preset-chip" onclick="setMarkup(80)">80%</button>
+        <button class="preset-chip" onclick="setMarkup(100)">100%</button>
+      </div>
+      <div class="markup-preview" id="markupPreview">
+        Markup atual: <strong id="markupValDisplay">70%</strong> &nbsp;·&nbsp; Fórmula: <span class="markup-formula">PV = Custo c/ IPI × 1,70</span>
+      </div>
+    </div>
+  </div>
+
   <button class="btn-consultar" id="btnConsultar" disabled onclick="consultar()">
     🔍 Consultar Preços
   </button>
@@ -258,7 +339,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
   <div id="resultado" style="display:none; margin-top:20px;"></div>
 </main>
 
-<footer>Eurovidros · Tabela Março/2026 · 176 registros</footer>
+<footer>Eurovidros · Tabela Março/2026 · 176 registros · Markup ajustável</footer>
 
 <!-- MODAL PRODUTO -->
 <div class="modal-overlay" id="modalOverlay" onclick="fecharModalFora(event)">
@@ -615,6 +696,59 @@ function updateBtn() {
 }
 
 // --- CONSULTA ---
+// --- MARKUP ---
+let markupPct = 70;
+
+function getMarkup() { return markupPct; }
+
+function onMarkupInput() {
+  let v = parseInt(document.getElementById('markupInput').value) || 70;
+  v = Math.max(5, Math.min(300, v));
+  markupPct = v;
+  document.getElementById('markupSlider').value = Math.min(v, 200);
+  atualizarPreviewMarkup();
+}
+
+function onMarkupSlider() {
+  const v = parseInt(document.getElementById('markupSlider').value);
+  markupPct = v;
+  document.getElementById('markupInput').value = v;
+  atualizarPreviewMarkup();
+}
+
+function ajustarMarkup(delta) {
+  let v = markupPct + delta;
+  v = Math.max(5, Math.min(300, v));
+  setMarkup(v);
+}
+
+function setMarkup(v) {
+  markupPct = v;
+  document.getElementById('markupInput').value = v;
+  document.getElementById('markupSlider').value = Math.min(v, 200);
+  atualizarPreviewMarkup();
+  // Atualiza preset chips
+  [50,60,70,80,100].forEach(p => {
+    const btn = document.querySelector(`.preset-chip[onclick="setMarkup(${p})"]`);
+    if (btn) btn.classList.toggle('selected', p === v);
+  });
+  // Se já tem resultado visível, recalcula
+  if (document.getElementById('resultado').style.display !== 'none') {
+    consultar();
+  }
+}
+
+function atualizarPreviewMarkup() {
+  const m = markupPct;
+  const fator = (1 + m/100).toFixed(2);
+  document.getElementById('markupValDisplay').textContent = m + '%';
+  document.querySelector('.markup-formula').textContent = 'PV = Custo c/ IPI × ' + fator;
+}
+
+function calcPV(pci) {
+  return pci * (1 + markupPct / 100);
+}
+
 function fmt(v) {
   if (v === null || v === undefined) return 'N/D';
   return 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -636,22 +770,30 @@ function consultar() {
   hdr.innerHTML = '<strong>' + selProduto + '</strong> · ' + selEspessura + ' · ' + rows.length + ' fornecedor' + (rows.length > 1 ? 'es' : '');
   res.appendChild(hdr);
 
-  const pvValues = rows.filter(d => d.pv !== null).map(d => d.pv);
+  // Calcula PV dinamicamente com markup configurado
+  const rowsComPV = rows.map(r => ({...r, pvCalc: r.pci ? calcPV(r.pci) : null}));
+  const pvValues = rowsComPV.filter(d => d.pvCalc !== null).map(d => d.pvCalc);
   const minPv = pvValues.length > 0 ? Math.min(...pvValues) : null;
-  const sorted = [...rows].sort((a, b) => {
-    if (a.pv === null && b.pv === null) return 0;
-    if (a.pv === null) return 1;
-    if (b.pv === null) return -1;
-    return a.pv - b.pv;
+  const sorted = [...rowsComPV].sort((a, b) => {
+    if (a.pvCalc === null && b.pvCalc === null) return 0;
+    if (a.pvCalc === null) return 1;
+    if (b.pvCalc === null) return -1;
+    return a.pvCalc - b.pvCalc;
   });
 
+  // Badge de markup ativo
+  const markupBadge = document.createElement('div');
+  markupBadge.style.cssText = 'font-size:11px;color:var(--accent);background:rgba(26,143,227,0.1);border:1px solid rgba(26,143,227,0.3);border-radius:6px;padding:6px 12px;margin-bottom:12px;';
+  markupBadge.innerHTML = '📐 Markup aplicado: <strong>' + markupPct + '%</strong> · PV = Custo c/ IPI × ' + (1 + markupPct/100).toFixed(2);
+  res.appendChild(markupBadge);
+
   sorted.forEach(r => {
-    const isMelhor = r.pv !== null && minPv !== null && r.pv === minPv && pvValues.length > 1;
+    const isMelhor = r.pvCalc !== null && minPv !== null && Math.abs(r.pvCalc - minPv) < 0.001 && pvValues.length > 1;
     const card = document.createElement('div');
     card.className = 'fornecedor-card' + (isMelhor ? ' melhor' : '');
     let diffHtml = '';
-    if (!isMelhor && r.pv !== null && minPv !== null && pvValues.length > 1) {
-      const diff = ((r.pv - minPv) / minPv * 100).toFixed(1);
+    if (!isMelhor && r.pvCalc !== null && minPv !== null && pvValues.length > 1) {
+      const diff = ((r.pvCalc - minPv) / minPv * 100).toFixed(1);
       diffHtml = ' <span style="font-size:12px;color:var(--red);">+' + diff + '%</span>';
     }
     const ipiHtml = r.ipi ? '<span class="ipi-tag">IPI ' + r.ipi + '</span>' : '';
@@ -660,7 +802,7 @@ function consultar() {
       '<div class="fornec-grade">' +
         '<div class="fornec-item"><div class="fornec-item-label">P. Compra</div><div class="fornec-item-val">' + fmt(r.pc) + ipiHtml + '</div></div>' +
         '<div class="fornec-item"><div class="fornec-item-label">P. Compra c/ IPI</div><div class="fornec-item-val destaque-gold">' + fmt(r.pci) + '</div></div>' +
-        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (sugerido)</div><div class="fornec-item-val destaque">' + fmt(r.pv) + diffHtml + '</div></div>' +
+        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (Markup ' + markupPct + '%)</div><div class="fornec-item-val destaque">' + fmt(r.pvCalc) + diffHtml + '</div></div>' +
       '</div>';
     res.appendChild(card);
   });
@@ -668,12 +810,12 @@ function consultar() {
   if (sorted.length > 1 && pvValues.length > 1) {
     const hr = document.createElement('hr'); hr.className = 'divider'; res.appendChild(hr);
     const maxPv = Math.max(...pvValues);
-    const melhorF = sorted.find(r => r.pv === minPv);
+    const melhorF = sorted.find(r => Math.abs(r.pvCalc - minPv) < 0.001);
     const economia = ((maxPv - minPv) / maxPv * 100).toFixed(1);
     const resumo = document.createElement('div'); resumo.className = 'resumo-box';
     resumo.innerHTML = '<div class="resumo-label">📊 Resumo Comparativo</div>' +
-      '<div class="resumo-row"><span>Menor P. Venda</span><span>' + fmt(minPv) + '</span></div>' +
-      '<div class="resumo-row"><span>Maior P. Venda</span><span>' + fmt(maxPv) + '</span></div>' +
+      '<div class="resumo-row"><span>Menor P. Venda (' + markupPct + '%)</span><span>' + fmt(minPv) + '</span></div>' +
+      '<div class="resumo-row"><span>Maior P. Venda (' + markupPct + '%)</span><span>' + fmt(maxPv) + '</span></div>' +
       '<div class="resumo-row"><span>Diferença</span><span>' + economia + '%</span></div>' +
       '<div class="resumo-row"><span>Melhor opção</span><span>' + (melhorF ? melhorF.f : '—') + '</span></div>';
     res.appendChild(resumo);
