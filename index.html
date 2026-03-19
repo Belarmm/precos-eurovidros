@@ -359,7 +359,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
   <!-- CARD 1: PRODUTO -->
   <div class="card">
     <div class="card-label">1. Produto</div>
-    <button class="picker-btn" id="btnProduto" onclick="abrirModal()">
+    <button class="picker-btn" id="btnProduto" >
       <span class="nome" id="nomeProduto">Toque para selecionar...</span>
       <span class="arrow">▾</span>
     </button>
@@ -377,21 +377,21 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
     <div class="markup-controls">
       <span class="markup-label">Percentual sobre custo c/ IPI</span>
       <div class="markup-stepper">
-        <button class="markup-btn" onclick="ajustarMarkup(-5)">−</button>
+        <button class="markup-btn" id="btnMenos">−</button>
         <span class="markup-val" id="markupVal">70</span>
         <span class="markup-pct">%</span>
-        <button class="markup-btn" onclick="ajustarMarkup(+5)">+</button>
+        <button class="markup-btn" id="btnMais">+</button>
       </div>
     </div>
     <input type="range" class="markup-slider" id="markupSlider"
       min="10" max="200" step="1" value="70"
-      oninput="setMarkup(+this.value)">
+      >
     <div class="markup-quick" id="markupQuick">
-      <button class="markup-quick-btn" onclick="setMarkup(50)">50%</button>
-      <button class="markup-quick-btn" onclick="setMarkup(60)">60%</button>
-      <button class="markup-quick-btn active" onclick="setMarkup(70)">70%</button>
-      <button class="markup-quick-btn" onclick="setMarkup(80)">80%</button>
-      <button class="markup-quick-btn" onclick="setMarkup(100)">100%</button>
+      <button class="markup-quick-btn" id="q50">50%</button>
+      <button class="markup-quick-btn" id="q60">60%</button>
+      <button class="markup-quick-btn active" id="q70">70%</button>
+      <button class="markup-quick-btn" id="q80">80%</button>
+      <button class="markup-quick-btn" id="q100">100%</button>
     </div>
     <div class="markup-formula" id="markupFormula">
       Markup atual: <strong>70%</strong> · Fórmula: PV = Custo c/ IPI × <strong>1,70</strong>
@@ -399,7 +399,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
   </div>
 
   <!-- BOTÃO -->
-  <button class="btn-consultar" id="btnConsultar" disabled onclick="consultar()">
+  <button class="btn-consultar" id="btnConsultar" disabled >
     🔍 Consultar Preços
   </button>
 
@@ -409,12 +409,12 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
 <footer>Eurovidros · Tabela Março/2026 · 207 registros</footer>
 
 <!-- MODAL PRODUTO -->
-<div class="modal-overlay" id="modalOverlay" onclick="fecharModalFora(event)">
+<div class="modal-overlay" id="modalOverlay" >
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">Selecione o Produto</div>
     <input class="modal-search" id="modalSearch" type="text" placeholder="Buscar produto ou categoria..."
-      oninput="filtrarModal()" autocomplete="off" autocorrect="off" spellcheck="false">
+       autocomplete="off" autocorrect="off" spellcheck="false">
     <div class="modal-list" id="modalList"></div>
   </div>
 </div>
@@ -1043,4 +1043,5 @@ function consultar() {
     card.innerHTML = badgeMelhor + headerHtml +
       '<div class="fornec-grade">' +
         '<div class="fornec-item"><div class="fornec-item-label">P. Compra</div><div class="fornec-item-val">' + fmt(r.pc) + ipiHtml + '</div></div>' +
-        '<div class="fornec-item"><div class="fornec-item-label">P. Co
+        '<div class="fornec-item"><div class="fornec-item-label">P. Compra c/ IPI</div><div class="fornec-item-val destaque-gold">' + fmt(r.pci) + '</div></div>' +
+        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (Markup ' + selMarkup + '%)</div><div class="fornec-item-val d
