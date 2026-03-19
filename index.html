@@ -1044,4 +1044,68 @@ function consultar() {
       '<div class="fornec-grade">' +
         '<div class="fornec-item"><div class="fornec-item-label">P. Compra</div><div class="fornec-item-val">' + fmt(r.pc) + ipiHtml + '</div></div>' +
         '<div class="fornec-item"><div class="fornec-item-label">P. Compra c/ IPI</div><div class="fornec-item-val destaque-gold">' + fmt(r.pci) + '</div></div>' +
-        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (Markup ' + selMarkup + '%)</div><div class="fornec-item-val d
+        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (Markup ' + selMarkup + '%)</div><div class="fornec-item-val destaque">' + fmt(r.pvCalc) + diffHtml + '</div></div>' +
+      '</div>';
+    res.appendChild(card);
+  });
+
+  // Resumo comparativo (só com 2+ resultados)
+  if (sorted.length > 1) {
+    const hr = document.createElement('hr'); hr.className = 'divider'; res.appendChild(hr);
+    const economia = ((maxPv - minPv) / maxPv * 100).toFixed(1);
+    const resumo = document.createElement('div'); resumo.className = 'resumo-box';
+    const melhorLabel = modoCategoria
+      ? melhorRow.p + ' (' + melhorRow.f + ')'
+      : melhorRow.f;
+    resumo.innerHTML =
+      '<div class="resumo-label">📊 Resumo Comparativo</div>' +
+      '<div class="resumo-row"><span>Menor P. Venda</span><span>' + fmt(minPv) + '</span></div>' +
+      '<div class="resumo-row"><span>Maior P. Venda</span><span>' + fmt(maxPv) + '</span></div>' +
+      '<div class="resumo-row"><span>Diferença</span><span>' + economia + '%</span></div>' +
+      '<div class="resumo-row"><span>Melhor opção</span><span>' + melhorLabel + '</span></div>';
+    res.appendChild(resumo);
+  }
+
+  setTimeout(() => res.scrollIntoView({behavior: 'smooth', block: 'start'}), 100);
+}
+
+
+/* =====================================================================
+   EVENT LISTENERS CENTRALIZADOS (compatível com todos ambientes)
+===================================================================== */
+(function() {
+  // Botão produto → abre modal
+  var btnP = document.getElementById('btnProduto');
+  if (btnP) {
+    btnP.addEventListener('click', function(e){ e.stopPropagation(); abrirModal(); });
+    btnP.addEventListener('touchend', function(e){ e.preventDefault(); e.stopPropagation(); abrirModal(); });
+  }
+  // Botões markup stepper
+  var bMenos = document.getElementById('btnMenos');
+  var bMais  = document.getElementById('btnMais');
+  if (bMenos) bMenos.addEventListener('click', function(){ ajustarMarkup(-5); });
+  if (bMais)  bMais.addEventListener('click', function(){ ajustarMarkup(+5); });
+  // Slider markup
+  var sl = document.getElementById('markupSlider');
+  if (sl) sl.addEventListener('input', function(){ setMarkup(+this.value); });
+  // Botões rápidos markup
+  [50,60,70,80,100].forEach(function(v){
+    var b = document.getElementById('q'+v);
+    if (b) b.addEventListener('click', function(){ setMarkup(v); });
+  });
+  // Botão consultar
+  var btnC = document.getElementById('btnConsultar');
+  if (btnC) btnC.addEventListener('click', consultar);
+  // Modal overlay fechar fora
+  var overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.addEventListener('click', function(e){
+    if (e.target === overlay) fecharModal();
+  });
+  // Campo busca modal
+  var ms = document.getElementById('modalSearch');
+  if (ms) ms.addEventListener('input', filtrarModal);
+})();
+
+</script>
+</body>
+</html>
