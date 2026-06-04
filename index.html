@@ -781,7 +781,8 @@ function abrirModal() {
   document.getElementById('modalOverlay').classList.add('open');
   document.getElementById('modalSearch').value = '';
   renderModalList('');
-  setTimeout(() => document.getElementById('modalSearch').focus(), 300);
+  // Teclado NÃO abre automaticamente — lista de categorias aparece direto.
+  // Para buscar digitando, basta tocar no campo de busca.
 }
 
 function fecharModal() {
