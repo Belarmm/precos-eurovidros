@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f1b2d">
-<title>Comparativo de Preços — Eurovidros</title>
+<title>Tabela de Preços — Varejo · Eurovidros</title>
 <style>
 :root {
   --bg: #0f1b2d;
@@ -349,7 +349,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
 <header>
   <div class="logo-icon">🪟</div>
   <div class="header-title">
-    <h1>Comparativo de Preços</h1>
+    <h1>Tabela de Preços — Varejo</h1>
     <p>Eurovidros — 4 fornecedores · 38 produtos</p>
   </div>
   <div class="badge-mes">JUN/26</div>
@@ -378,23 +378,23 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
       <span class="markup-label">Percentual sobre custo c/ IPI</span>
       <div class="markup-stepper">
         <button class="markup-btn" id="btnMenos">−</button>
-        <span class="markup-val" id="markupVal">70</span>
+        <span class="markup-val" id="markupVal">75</span>
         <span class="markup-pct">%</span>
         <button class="markup-btn" id="btnMais">+</button>
       </div>
     </div>
     <input type="range" class="markup-slider" id="markupSlider"
-      min="10" max="200" step="1" value="70"
+      min="10" max="200" step="1" value="75"
       >
     <div class="markup-quick" id="markupQuick">
-      <button class="markup-quick-btn" id="q50">50%</button>
       <button class="markup-quick-btn" id="q60">60%</button>
-      <button class="markup-quick-btn active" id="q70">70%</button>
+      <button class="markup-quick-btn" id="q70">70%</button>
+      <button class="markup-quick-btn active" id="q75">75%</button>
       <button class="markup-quick-btn" id="q80">80%</button>
       <button class="markup-quick-btn" id="q100">100%</button>
     </div>
     <div class="markup-formula" id="markupFormula">
-      Markup atual: <strong>70%</strong> · Fórmula: PV = Custo c/ IPI × <strong>1,70</strong>
+      Markup atual: <strong>75%</strong> · Fórmula: PV = Custo c/ IPI × <strong>1,75</strong>
     </div>
   </div>
 
@@ -745,7 +745,7 @@ const PRODUCTS = Object.keys(ESP_MAP).sort();
 /* =====================================================================
    ESTADO
 ===================================================================== */
-let selMarkup    = 70;
+let selMarkup    = 75;
 let modoCategoria = false;
 let selCategoria  = null; // objeto de CATEGORIES
 let selProduto    = '';
@@ -1091,7 +1091,7 @@ function consultar() {
   var sl = document.getElementById('markupSlider');
   if (sl) sl.addEventListener('input', function(){ setMarkup(+this.value); });
   // Botões rápidos markup
-  [50,60,70,80,100].forEach(function(v){
+  [60,70,75,80,100].forEach(function(v){
     var b = document.getElementById('q'+v);
     if (b) b.addEventListener('click', function(){ setMarkup(v); });
   });
