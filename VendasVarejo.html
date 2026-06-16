@@ -373,9 +373,9 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
 
   <!-- CARD 3: MARKUP -->
   <div class="card" id="cardMarkup">
-    <div class="card-label">3. Markup de Venda</div>
+    <div class="card-label">3. Margem de Venda</div>
     <div class="markup-controls">
-      <span class="markup-label">Percentual sobre custo c/ IPI</span>
+      <span class="markup-label">Margem aplicada (define o preço)</span>
       <div class="markup-stepper">
         <button class="markup-btn" id="btnMenos">−</button>
         <span class="markup-val" id="markupVal">75</span>
@@ -384,17 +384,19 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
       </div>
     </div>
     <input type="range" class="markup-slider" id="markupSlider"
-      min="10" max="200" step="1" value="75"
+      min="45" max="75" step="5" value="75"
       >
     <div class="markup-quick" id="markupQuick">
+      <button class="markup-quick-btn" id="q45">45%</button>
+      <button class="markup-quick-btn" id="q50">50%</button>
+      <button class="markup-quick-btn" id="q55">55%</button>
       <button class="markup-quick-btn" id="q60">60%</button>
+      <button class="markup-quick-btn" id="q65">65%</button>
       <button class="markup-quick-btn" id="q70">70%</button>
       <button class="markup-quick-btn active" id="q75">75%</button>
-      <button class="markup-quick-btn" id="q80">80%</button>
-      <button class="markup-quick-btn" id="q100">100%</button>
     </div>
     <div class="markup-formula" id="markupFormula">
-      Markup atual: <strong>75%</strong> · Fórmula: PV = Custo c/ IPI × <strong>1,75</strong>
+      Margem atual: <strong>75%</strong> · selecione de 45% a 75% (passo 5%)
     </div>
   </div>
 
@@ -755,13 +757,13 @@ let selEspessura  = '';
    MARKUP
 ===================================================================== */
 function setMarkup(v) {
-  v = Math.min(200, Math.max(10, Math.round(v)));
+  v = Math.min(75, Math.max(45, Math.round(v/5)*5));
   selMarkup = v;
   document.getElementById('markupVal').textContent = v;
   document.getElementById('markupSlider').value = v;
   const mult = (1 + v/100).toFixed(2).replace('.', ',');
   document.getElementById('markupFormula').innerHTML =
-    'Markup atual: <strong>' + v + '%</strong> · Fórmula: PV = Custo c/ IPI × <strong>' + mult + '</strong>';
+    'Margem atual: <strong>' + v + '%</strong> · selecione de 45% a 75% (passo 5%)';
   // destaca botão rápido ativo
   document.querySelectorAll('.markup-quick-btn').forEach(b => {
     const bv = parseInt(b.textContent);
@@ -1044,9 +1046,7 @@ function consultar() {
 
     card.innerHTML = badgeMelhor + headerHtml +
       '<div class="fornec-grade">' +
-        '<div class="fornec-item"><div class="fornec-item-label">P. Compra</div><div class="fornec-item-val">' + fmt(r.pc) + ipiHtml + '</div></div>' +
-        '<div class="fornec-item"><div class="fornec-item-label">P. Compra c/ IPI</div><div class="fornec-item-val destaque-gold">' + fmt(r.pci) + '</div></div>' +
-        '<div class="fornec-item full"><div class="fornec-item-label">P. Venda (Markup ' + selMarkup + '%)</div><div class="fornec-item-val destaque">' + fmt(r.pvCalc) + diffHtml + '</div></div>' +
+        '<div class="fornec-item full"><div class="fornec-item-label">Preço de Venda (Margem ' + selMarkup + '%)</div><div class="fornec-item-val destaque">' + fmt(r.pvCalc) + diffHtml + '</div></div>' +
       '</div>';
     res.appendChild(card);
   });
@@ -1091,7 +1091,7 @@ function consultar() {
   var sl = document.getElementById('markupSlider');
   if (sl) sl.addEventListener('input', function(){ setMarkup(+this.value); });
   // Botões rápidos markup
-  [60,70,75,80,100].forEach(function(v){
+  [45,50,55,60,65,70,75].forEach(function(v){
     var b = document.getElementById('q'+v);
     if (b) b.addEventListener('click', function(){ setMarkup(v); });
   });
