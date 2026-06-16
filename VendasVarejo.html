@@ -753,17 +753,33 @@ let selCategoria  = null; // objeto de CATEGORIES
 let selProduto    = '';
 let selEspessura  = '';
 
+/* Piso de margem por tipo de produto (commodities = vidro incolor e coloridos) */
+const COMMODITIES = ["Vidro Incolor","Vidro Cinza","Vidro Verde","Vidro Bronze Float (Cebrace)","Vidro Diamant Float (Cebrace)","Vidro Emerald Float (Cebrace)"];
+function ehCommodity(){
+  if (modoCategoria && selCategoria) return selCategoria.key === 'Vidro Incolor' || selCategoria.key === 'Vidros Coloridos';
+  return COMMODITIES.indexOf(selProduto) !== -1;
+}
+function pisoMargem(){ return ehCommodity() ? 50 : 45; }
+function atualizarPiso(){
+  var piso = pisoMargem();
+  var b45 = document.getElementById('q45');
+  if (b45) b45.style.display = (piso <= 45 ? '' : 'none');
+  var sl = document.getElementById('markupSlider');
+  if (sl) sl.min = piso;
+  setMarkup(selMarkup < piso ? piso : selMarkup);
+}
+
 /* =====================================================================
    MARKUP
 ===================================================================== */
 function setMarkup(v) {
-  v = Math.min(75, Math.max(45, Math.round(v/5)*5));
+  v = Math.min(75, Math.max(pisoMargem(), Math.round(v/5)*5));
   selMarkup = v;
   document.getElementById('markupVal').textContent = v;
   document.getElementById('markupSlider').value = v;
   const mult = (1 + v/100).toFixed(2).replace('.', ',');
   document.getElementById('markupFormula').innerHTML =
-    'Margem atual: <strong>' + v + '%</strong> · selecione de 45% a 75% (passo 5%)';
+    'Margem atual: <strong>' + v + '%</strong> · mínimo ' + pisoMargem() + '% · máx 75% (passo 5%)';
   // destaca botão rápido ativo
   document.querySelectorAll('.markup-quick-btn').forEach(b => {
     const bv = parseInt(b.textContent);
@@ -896,6 +912,7 @@ function selecionarCategoria(key) {
   fecharModal();
   renderChipsCategoria(cat);
   document.getElementById('cardEspessura').style.display = 'block';
+  atualizarPiso();
   updateBtn();
 }
 
@@ -912,6 +929,7 @@ function selecionarProduto(p) {
   fecharModal();
   renderChipsIndividual(p);
   document.getElementById('cardEspessura').style.display = 'block';
+  atualizarPiso();
   updateBtn();
 }
 
