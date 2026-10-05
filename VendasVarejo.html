@@ -350,7 +350,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
   <div class="logo-icon">🪟</div>
   <div class="header-title">
     <h1>Tabela de Preços — Varejo</h1>
-    <p>Eurovidros — 4 fornecedores · 80 produtos</p>
+    <p>Eurovidros — 4 fornecedores · 81 produtos</p>
     <p style="font-size:11px;opacity:.75;margin-top:2px">Todas as tabelas vigentes · Cebrace · AGC · Vivix · Guardian · Set/26</p>
   </div>
   <div class="badge-mes">SET/26</div>
@@ -409,7 +409,7 @@ footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: va
   <div id="resultado" style="display:none; margin-top:20px;"></div>
 </main>
 
-<footer>Eurovidros · Tabelas vigentes · Cebrace · AGC · Vivix · Guardian SET/26 · 336 registros</footer>
+<footer>Eurovidros · Tabelas vigentes · Cebrace · AGC · Vivix · Guardian SET/26 · 341 registros</footer>
 
 <!-- MODAL PRODUTO -->
 <div class="modal-overlay" id="modalOverlay" >
@@ -466,6 +466,10 @@ const DB = [
   {f:"VIVIX",p:"Proteção Solar Bronze",e:"6mm",pc:92.56,ipi:"6,5%",pci:98.5764,pv:167.58},
   {f:"VIVIX",p:"Proteção Solar Bronze",e:"8mm",pc:123.78,ipi:"6,5%",pci:131.826,pv:224.104},
   {f:"VIVIX",p:"Proteção Solar Verde",e:"4mm",pc:66.04,ipi:"6,5%",pci:70.3326,pv:119.565},
+  {f:"VIVIX",p:"Proteção Solar Cinza",e:"3mm",pc:68.86,ipi:"6,5%",pci:73.3359,pv:124.671},
+  {f:"VIVIX",p:"Proteção Solar Cinza",e:"4mm",pc:66.04,ipi:"6,5%",pci:70.3326,pv:119.565},
+  {f:"VIVIX",p:"Proteção Solar Cinza",e:"8mm",pc:140.1,ipi:"6,5%",pci:149.207,pv:253.651},
+  {f:"VIVIX",p:"Proteção Solar Cinza",e:"10mm",pc:235.21,ipi:"6,5%",pci:250.499,pv:425.848},
   {f:"CEBRACE",p:"Vidro Incolor",e:"2mm",pc:26.66,ipi:"6,5%",pci:28.4,pv:48.28},
   {f:"CEBRACE",p:"Vidro Incolor",e:"2.5mm",pc:30.26,ipi:"6,5%",pci:32.23,pv:54.791},
   {f:"CEBRACE",p:"Vidro Incolor",e:"3mm",pc:28.61,ipi:"6,5%",pci:30.47,pv:51.799},
@@ -728,6 +732,7 @@ const DB = [
   {f:"AGC",p:"Sunlux Fumê 35",e:"10mm",pc:195.22,ipi:"6,5%",pci:207.91,pv:353.447},
   {f:"AGC",p:"Laminado Sunlux Champanhe",e:"3+3",pc:137.65,ipi:"6,5%",pci:146.59,pv:249.203},
   {f:"AGC",p:"Laminado Sunlux Champanhe",e:"4+4",pc:168.82,ipi:"6,5%",pci:179.79,pv:305.643},
+  {f:"AGC",p:"Laminado Incolor",e:"5+5",pc:138.84,ipi:"6,5%",pci:147.87,pv:251.379},
   {f:"GUARDIAN",p:"Vidro Incolor",e:"3mm",pc:27.95,ipi:"6,5%",pci:29.76,pv:50.592},
   {f:"GUARDIAN",p:"Vidro Incolor",e:"4mm",pc:40.69,ipi:"6,5%",pci:43.33,pv:73.661},
   {f:"GUARDIAN",p:"Vidro Incolor",e:"6mm",pc:62.95,ipi:"6,5%",pci:67.04,pv:113.968},
@@ -802,7 +807,7 @@ const CATEGORIES = [
     icon: "☀️",
     label: "Controle Solar",
     sub: "Sunlux, Cool Lite, Reflecta, Reflect Guard, Proteção Solar, Pure Comfort...",
-    products: ["Cool Lite ST 108/136/150/167", "Cool Lite ST 120", "Cool Lite ST 420/436/STR 428", "Cool Lite STB 120", "Proteção Solar Bronze", "Proteção Solar Verde", "Pure Comfort 10", "Pure Comfort 14", "Reflect Guard Clear", "Reflecta Incolor", "Reflex", "Sunlux 14 Clear", "Sunlux 14 Verde", "Sunlux 20 Clear", "Sunlux 20 Verde", "Sunlux 32 Clear", "Sunlux 32 Verde", "Sunlux 50 Clear", "Sunlux 50 Verde", "Sunlux 60 Clear", "Sunlux 65 Clear", "Sunlux Azul", "Sunlux Champanhe", "Sunlux Fumê 35"]
+    products: ["Cool Lite ST 108/136/150/167", "Cool Lite ST 120", "Cool Lite ST 420/436/STR 428", "Cool Lite STB 120", "Proteção Solar Bronze", "Proteção Solar Cinza", "Proteção Solar Verde", "Pure Comfort 10", "Pure Comfort 14", "Reflect Guard Clear", "Reflecta Incolor", "Reflex", "Sunlux 14 Clear", "Sunlux 14 Verde", "Sunlux 20 Clear", "Sunlux 20 Verde", "Sunlux 32 Clear", "Sunlux 32 Verde", "Sunlux 50 Clear", "Sunlux 50 Verde", "Sunlux 60 Clear", "Sunlux 65 Clear", "Sunlux Azul", "Sunlux Champanhe", "Sunlux Fumê 35"]
   },
   {
     key: "Laminados de Controle Solar",
@@ -866,6 +871,7 @@ const ESP_MAP = {
   "Pintado Branco / Preto / Nude": ["4mm"],
   "Pintado Bronze": ["4mm"],
   "Proteção Solar Bronze": ["4mm", "6mm", "8mm"],
+  "Proteção Solar Cinza": ["3mm", "4mm", "8mm", "10mm"],
   "Proteção Solar Verde": ["4mm"],
   "Pure Comfort 10": ["4mm"],
   "Pure Comfort 14": ["4mm"],
