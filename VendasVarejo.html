@@ -278,6 +278,8 @@ main { padding: 16px; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
 
 /* RESULTADOS */
 #resultado { margin-top: 4px; }
+.grupo-titulo { margin: 18px 2px 8px; font-size: 13px; font-weight: 700; color: var(--accent2); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid rgba(255,255,255,.08); padding-bottom: 6px; }
+.grupo-titulo span { float: right; font-weight: 400; color: var(--text2); text-transform: none; letter-spacing: 0; }
 .resultado-header {
   font-size: 13px; color: var(--text2);
   margin-bottom: 12px; padding: 0 2px;
@@ -1205,14 +1207,28 @@ function consultar() {
   const sorted = [...rows].sort((a, b) => a.pvCalc - b.pvCalc);
   const melhorRow = sorted[0];
 
-  sorted.forEach(r => {
-    const isMelhor = r.pvCalc === minPv && rows.length > 1;
+  // Agrupa por produto em ordem alfabética; dentro de cada produto, o mais barato primeiro
+  const grupos = {};
+  rows.forEach(r => { (grupos[r.p] = grupos[r.p] || []).push(r); });
+  const nomes = Object.keys(grupos).sort((x, y) => x.localeCompare(y, 'pt-BR'));
+
+  nomes.forEach(nome => {
+   const g = grupos[nome].sort((x, y) => x.pvCalc - y.pvCalc);
+   const minG = g[0].pvCalc;
+   if (modoCategoria) {
+     const gt = document.createElement('div');
+     gt.className = 'grupo-titulo';
+     gt.innerHTML = nome + ' <span>' + g.length + ' usina' + (g.length === 1 ? '' : 's') + '</span>';
+     res.appendChild(gt);
+   }
+   g.forEach(r => {
+    const isMelhor = r.pvCalc === minG && g.length > 1;
     const card = document.createElement('div');
     card.className = 'fornecedor-card' + (isMelhor ? ' melhor' : '');
 
     let diffHtml = '';
-    if (!isMelhor && rows.length > 1) {
-      const diff = ((r.pvCalc - minPv) / minPv * 100).toFixed(1);
+    if (!isMelhor && g.length > 1) {
+      const diff = ((r.pvCalc - minG) / minG * 100).toFixed(1);
       diffHtml = ' <span style="font-size:12px;color:var(--red);">+' + diff + '%</span>';
     }
 
@@ -1237,6 +1253,7 @@ function consultar() {
         '<div class="fornec-item full"><div class="fornec-item-label">Preço de Venda</div><div class="fornec-item-val destaque">' + fmt(r.pvCalc) + diffHtml + '</div></div>' +
       '</div>';
     res.appendChild(card);
+   });
   });
 
   // Resumo comparativo (só com 2+ resultados)
@@ -1251,8 +1268,8 @@ function consultar() {
       '<div class="resumo-label">📊 Resumo Comparativo</div>' +
       '<div class="resumo-row"><span>Menor P. Venda</span><span>' + fmt(minPv) + '</span></div>' +
       '<div class="resumo-row"><span>Maior P. Venda</span><span>' + fmt(maxPv) + '</span></div>' +
-      '<div class="resumo-row"><span>Diferença</span><span>' + economia + '%</span></div>' +
-      '<div class="resumo-row"><span>Melhor opção</span><span>' + melhorLabel + '</span></div>';
+      (modoCategoria ? '' : '<div class="resumo-row"><span>Diferença</span><span>' + economia + '%</span></div>') +
+      '<div class="resumo-row"><span>' + (modoCategoria ? 'Mais barato da categoria' : 'Melhor opção') + '</span><span>' + melhorLabel + '</span></div>';
     res.appendChild(resumo);
   }
 
